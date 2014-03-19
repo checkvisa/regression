@@ -1,0 +1,838 @@
+par(mfrow = c(1, 2))#
+par(cex.lab=1.2, cex.axis=1.2, cex.main=1.5, cex.sub=1.5)#
+par(mar = c(3, 3, 3, 0), oma = c(1, 1, 1, 1))#
+#plot(exp(dc$x), dc$y, log="x", type="l", main="edge weight (competitor)\n#edges=1,366,203", xlab="", ylab="")+grid()#
+#plot(exp(dp$x), dp$y, log="x", type="l", main="edge weight (collaborator)\n#edges=294,958", xlab="", ylab="")+grid()#
+plot(ddc, main="competitor network\n#nodes=1,692", xlab="", ylab="")+grid()#
+plot(ddp, main="collaborator network\n#nodes=1,692", xlab="", ylab="")+grid()
+ls()
+% adoptor variance analysis#
+useraei <- read.table("aei-1995.txt", col.names=c("aei"))#
+useraeisample <- useraei[sample(nrow(useraei), 5000),]#
+useraei <- useraei[useraei$aei<1,]#
+probs <- c(0.025, 0.16, 0.5, 0.84)#
+q <- quantile(useraei, probs, names=FALSE)#
+aei <- dataei$aei#
+d1 <- dataei[aei<q[1],]#
+d2 <- dataei[aei>=q[1],]#
+d2 <- d2[d2$aei<q[2],]#
+d3 <- dataei[aei>=q[2],]#
+d3 <- d3[d3$aei<q[3],]#
+d4 <- dataei[aei>=q[3],]#
+d4 <- d4[d4$aei<q[4],]#
+d5 <- dataei[aei>=q[4],]#
+#
+makebarplot <- function(f, maintitle) {#
+m1 <- glm(f, data=d1, family="binomial")#
+m2 <- glm(f, data=d2, family="binomial")#
+m3 <- glm(f, data=d3, family="binomial")#
+m4 <- glm(f, data=d4, family="binomial")#
+m5 <- glm(f, data=d5, family="binomial")#
+C1<-coef(m1)#
+C2<-coef(m2)#
+C3<-coef(m3)#
+C4<-coef(m4)#
+C5<-coef(m5)#
+ci1<-confint.default(m1, level=0.9)#
+ci2<-confint.default(m2, level=0.9)#
+ci3<-confint.default(m3, level=0.9)#
+ci4<-confint.default(m4, level=0.9)#
+ci5<-confint.default(m5, level=0.9)#
+coefmat <- rbind(C1,C2,C3,C4,C5)[,2:length(coef(m1))]#
+cilmat <- rbind(ci1[,1],ci2[,1],ci3[,1],ci4[,1],ci5[,1])[,2:length(coef(m1))]#
+ciumat <- rbind(ci1[,2],ci2[,2],ci3[,2],ci4[,2],ci5[,2])[,2:length(coef(m1))]#
+#
+library(RColorBrewer)#
+#mycolor = c("lightblue", "mistyrose", "lightcyan", "lavender", "cornsilk")library(RColorBrewer)#
+mycolor<-brewer.pal(5,"Pastel1")#
+leg=c("Innovator", "Early adopter", "Early majority", "Late majority", "Laggard")#
+#postscript("fig-aei.eps")#
+library(gplots)#
+barplot2(coefmat, beside=TRUE, col=mycolor, ci.u=ciumat, ci.l=cilmat,plot.grid=FALSE, axes=TRUE, plot.ci=TRUE, main=maintitle)#
+#dev.off()	#
+}#
+#
+par(mfrow = c(1, 3))#
+par(cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)#
+par(mar = c(2.3, 3.5, 3, 2.3), oma = c(1, 1, 1, 1))#
+makebarplot(adopted~inflnorm, "social influence")#
+#makebarplot(adopted~cpop, "innovation popularity") # follow same trend as inflnorm#
+#makebarplot(adopted~rinflccc, "competitor influence \n(average)")#
+makebarplot(adopted~rinflcsum, "competitor influence")#
+makebarplot(adopted~rinflpsum, "collaborator influence") # follow same trend as rinflcsum#
+#makebarplot(adopted~rinflpcc, "collaborator influence\n (average)")
+useraei <- read.table("aei-1995.txt", col.names=c("aei"))
+useraei <- useraei[useraei$aei<1,]
+dim(useraei)
+length(useraei)
+dat2s <- dat2[dat2$rlv>0.1,]
+dat2ss <- dat2s[sample(1:nrow(dat2s), 10000), c("wdgc","wdgp","rinflccc","rinflpcc", "cupresdiffc", "cupresdiffp", "adopted")]
+load("data/dat2.RData")
+dat2s <- dat2[dat2$rlv>0.1,]
+% adoptor variance analysis#
+useraei <- read.table("aei-1995.txt", col.names=c("aei"))#
+useraeisample <- useraei[sample(nrow(useraei), 5000),]#
+useraei <- useraei[useraei$aei<1,]#
+probs <- c(0.025, 0.16, 0.5, 0.84)#
+q <- quantile(useraei, probs, names=FALSE)#
+dataei <- dat2s#
+aei <- dataei$aei#
+d1 <- dataei[aei<q[1],]#
+d2 <- dataei[aei>=q[1],]#
+d2 <- d2[d2$aei<q[2],]#
+d3 <- dataei[aei>=q[2],]#
+d3 <- d3[d3$aei<q[3],]#
+d4 <- dataei[aei>=q[3],]#
+d4 <- d4[d4$aei<q[4],]#
+d5 <- dataei[aei>=q[4],]#
+#
+makebarplot <- function(f, maintitle) {#
+m1 <- glm(f, data=d1, family="binomial")#
+m2 <- glm(f, data=d2, family="binomial")#
+m3 <- glm(f, data=d3, family="binomial")#
+m4 <- glm(f, data=d4, family="binomial")#
+m5 <- glm(f, data=d5, family="binomial")#
+C1<-coef(m1)#
+C2<-coef(m2)#
+C3<-coef(m3)#
+C4<-coef(m4)#
+C5<-coef(m5)#
+ci1<-confint.default(m1, level=0.9)#
+ci2<-confint.default(m2, level=0.9)#
+ci3<-confint.default(m3, level=0.9)#
+ci4<-confint.default(m4, level=0.9)#
+ci5<-confint.default(m5, level=0.9)#
+coefmat <- rbind(C1,C2,C3,C4,C5)[,2:length(coef(m1))]#
+cilmat <- rbind(ci1[,1],ci2[,1],ci3[,1],ci4[,1],ci5[,1])[,2:length(coef(m1))]#
+ciumat <- rbind(ci1[,2],ci2[,2],ci3[,2],ci4[,2],ci5[,2])[,2:length(coef(m1))]#
+#
+library(RColorBrewer)#
+#mycolor = c("lightblue", "mistyrose", "lightcyan", "lavender", "cornsilk")library(RColorBrewer)#
+mycolor<-brewer.pal(5,"Pastel1")#
+leg=c("Innovator", "Early adopter", "Early majority", "Late majority", "Laggard")#
+#postscript("fig-aei.eps")#
+library(gplots)#
+barplot2(coefmat, beside=TRUE, col=mycolor, ci.u=ciumat, ci.l=cilmat,plot.grid=FALSE, axes=TRUE, plot.ci=TRUE, main=maintitle)#
+#dev.off()	#
+}#
+#
+par(mfrow = c(1, 3))#
+par(cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)#
+par(mar = c(2.3, 3.5, 3, 2.3), oma = c(1, 1, 1, 1))#
+makebarplot(adopted~inflnorm, "social influence")#
+#makebarplot(adopted~cpop, "innovation popularity") # follow same trend as inflnorm#
+#makebarplot(adopted~rinflccc, "competitor influence \n(average)")#
+makebarplot(adopted~rinflcsum, "competitor influence")#
+makebarplot(adopted~rinflpsum, "collaborator influence") # follow same trend as rinflcsum#
+#makebarplot(adopted~rinflpcc, "collaborator influence\n (average)")
+plot aei distribution of users at 1995#
+useraei <- read.table("aei-1995.txt", col.names=c("aei"))#
+useraeisample <- useraei[sample(nrow(useraei), 5000),]#
+useraei <- useraei[useraei$aei<1,]#
+shapiro.test(useraeisample)#
+qqnorm(useraeisample)#
+qqline(useraeisample, col=1)#
+summary(useraei)#
+mean(useraei)#
+sd(useraei)
+adoptor variance analysis#
+useraei <- read.table("aei-1995.txt", col.names=c("aei"))#
+useraeisample <- useraei[sample(nrow(useraei), 5000),]#
+useraei <- useraei[useraei$aei<1,]#
+probs <- c(0.025, 0.16, 0.5, 0.84)#
+q <- quantile(useraei, probs, names=FALSE)#
+dataei <- dat2s#
+aei <- dataei$aei#
+d1 <- dataei[aei<q[1],]#
+d2 <- dataei[aei>=q[1],]#
+d2 <- d2[d2$aei<q[2],]#
+d3 <- dataei[aei>=q[2],]#
+d3 <- d3[d3$aei<q[3],]#
+d4 <- dataei[aei>=q[3],]#
+d4 <- d4[d4$aei<q[4],]#
+d5 <- dataei[aei>=q[4],]#
+#
+makebarplot <- function(f, maintitle) {#
+m1 <- glm(f, data=d1, family="binomial")#
+m2 <- glm(f, data=d2, family="binomial")#
+m3 <- glm(f, data=d3, family="binomial")#
+m4 <- glm(f, data=d4, family="binomial")#
+m5 <- glm(f, data=d5, family="binomial")#
+C1<-coef(m1)#
+C2<-coef(m2)#
+C3<-coef(m3)#
+C4<-coef(m4)#
+C5<-coef(m5)#
+ci1<-confint.default(m1, level=0.9)#
+ci2<-confint.default(m2, level=0.9)#
+ci3<-confint.default(m3, level=0.9)#
+ci4<-confint.default(m4, level=0.9)#
+ci5<-confint.default(m5, level=0.9)#
+coefmat <- rbind(C1,C2,C3,C4,C5)[,2:length(coef(m1))]#
+cilmat <- rbind(ci1[,1],ci2[,1],ci3[,1],ci4[,1],ci5[,1])[,2:length(coef(m1))]#
+ciumat <- rbind(ci1[,2],ci2[,2],ci3[,2],ci4[,2],ci5[,2])[,2:length(coef(m1))]#
+#
+library(RColorBrewer)#
+#mycolor = c("lightblue", "mistyrose", "lightcyan", "lavender", "cornsilk")library(RColorBrewer)#
+mycolor<-brewer.pal(5,"Pastel1")#
+leg=c("Innovator", "Early adopter", "Early majority", "Late majority", "Laggard")#
+#postscript("fig-aei.eps")#
+library(gplots)#
+barplot2(coefmat, beside=TRUE, col=mycolor, ci.u=ciumat, ci.l=cilmat,plot.grid=FALSE, axes=TRUE, plot.ci=TRUE, main=maintitle)#
+#dev.off()	#
+}#
+#
+par(mfrow = c(1, 3))#
+par(cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)#
+par(mar = c(2.3, 3.5, 3, 2.3), oma = c(1, 1, 1, 1))#
+makebarplot(adopted~inflnorm, "social influence")#
+#makebarplot(adopted~cpop, "innovation popularity") # follow same trend as inflnorm#
+#makebarplot(adopted~rinflccc, "competitor influence \n(average)")#
+makebarplot(adopted~rinflcsum, "competitor influence")#
+makebarplot(adopted~rinflpsum, "collaborator influence") # follow same trend as rinflcsum#
+#makebarplot(adopted~rinflpcc, "collaborator influence\n (average)")
+par(mfrow = c(1, 3))#
+par(cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)#
+par(mar = c(2, 2, 2, 0), oma = c(1, 1, 1, 1))#
+makebarplot(adopted~inflnorm, "social influence")#
+#makebarplot(adopted~cpop, "innovation popularity") # follow same trend as inflnorm#
+#makebarplot(adopted~rinflccc, "competitor influence \n(average)")#
+makebarplot(adopted~rinflcsum, "competitor influence")#
+makebarplot(adopted~rinflpsum, "collaborator influence") # follow same trend as rinflcsum#
+#makebarplot(adopted~rinflpcc, "collaborator influence\n (average)")
+par(mfrow = c(1, 3))#
+par(cex.lab=1.5, cex.axis=1.5, cex.main=1.5, cex.sub=1.5)#
+par(mar = c(2, 2.5, 2, 0), oma = c(1, 1, 1, 1))#
+makebarplot(adopted~inflnorm, "social influence")#
+#makebarplot(adopted~cpop, "innovation popularity") # follow same trend as inflnorm#
+#makebarplot(adopted~rinflccc, "competitor influence \n(average)")#
+makebarplot(adopted~rinflcsum, "competitor influence")#
+makebarplot(adopted~rinflpsum, "collaborator influence") # follow same trend as rinflcsum#
+#makebarplot(adopted~rinflpcc, "collaborator influence\n (average)")
+library(igraph)
+help(igraph)
+ls()
+laod("dat.RData")
+load("dat.RData")
+ls()
+dat
+boxplot(wt~byear, dat)
+boxplot(wt~byear, dat, ylim=c(0,200))
+boxplot(wt~byear, dat, ylim=c(0,150))
+boxplot(wt~byear, dat, ylim=c(0,150), main="Waiting time")
+table(wt~byear)
+table(dat$byear)
+hist(table(dat$byear))
+plot(table(dat$byear))
+boxplot(table(dat$byear))
+plot(table(dat$byear), main="Number of cases by year")
+dat2 <- dat[dat$byear>=2009]
+dat2 <- dat[dat$byear>=2009,]
+boxplot(wt~bmonth, dat1, main="Waiting time")
+boxplot(wt~bmonth, dat2, main="Waiting time")
+boxplot(wt~bmonth, dat2, ylim=c(0,150), main="Waiting time")
+boxplot(wt~bmonth, dat2, ylim=c(0,100), main="Waiting time")
+boxplot(wt~bmonth, dat2, ylim=c(0,100), main="Waiting time by month")
+boxplot(wt~bday, dat2, ylim=c(0,100), main="Waiting time by date")
+boxplot(wt~type, ylim=c(0,100), main="Waiting time by type")
+boxplot(wt~type, dat2, ylim=c(0,100), main="Waiting time by type")
+boxplot(wt~type, dat2, ylim=c(0,100), main="Waiting time by visa type")
+boxplot(wt~entry, dat2, ylim=c(0,100), main="Waiting time by visa entry")
+boxplot(wt~major, dat2, ylim=c(0,100), main="Waiting time by major")
+help(boxplot)
+boxplot(wt~major, dat2, ylim=c(0,100), subset=c("Chemistry"), main="Waiting time by major")
+boxplot(wt~major, dat2, ylim=c(0,100), main="Waiting time by major")
+boxplot(wt~major, dat2[dat2$major=="Chemistry"], ylim=c(0,100), main="Waiting time by major")
+boxplot(wt~major, dat2[dat2$major=="Chemistry",], ylim=c(0,100), main="Waiting time by major")
+boxplot(wt~major, ylim=c(0,100), main="Waiting time by major")
+boxplot(wt~major, dat2, ylim=c(0,100), main="Waiting time by major")
+boxplot(wt~city, dat2, ylim=c(0,100), main="Waiting time by city")
+names(dat2)
+boxplot(wt~type, dat2, ylim=c(0,100), main="Waiting time by visa type")
+%1
+1
+m1 <- lm(wt~major+city+type+entry+byear, dat=dat2)
+dat2 <- dat[dat$byear>=2009,]
+load("dat.RData")
+dat2 <- dat[dat$byear>=2009,]
+m1 <- lm(wt~major+city+type+entry+byear, dat=dat2)
+m1
+summary(m1)
+residuals(m1)
+boxplot(residuals)
+boxplot(residuals(m1))
+boxplot(residuals(m1), ylim=c(0,100))
+boxplot(residuals(m1), ylim=c(-100,100))
+plot(density(residuals(m1)))
+plot(density(residuals(m1)), xlim=c(-20,20))
+plot(density(residuals(m1)), xlim=c(-50,50))
+summary(residuals(m1))
+plot(density(residuals(m1)), xlim=c(-50,50))
+plot(density(residuals(m1)), xlim=c(-50,50), main="Prediction error")
+plot(density(residuals(m1)), xlim=c(-50,50), main="Distribution of prediction error")
+load("dat.RData")#
+boxplot(wt~byear, dat, ylim=c(0,150), main="Waiting time")#
+plot(table(dat$byear), main="Number of cases by year")#
+#
+dat2 <- dat[dat$byear>=2009,]#
+boxplot(wt~bmonth, dat2, ylim=c(0,100), main="Waiting time by month")#
+boxplot(wt~bday, dat2, ylim=c(0,100), main="Waiting time by date")#
+boxplot(wt~type, dat2, ylim=c(0,100), main="Waiting time by visa type")#
+boxplot(wt~entry, dat2, ylim=c(0,100), main="Waiting time by visa entry")#
+boxplot(wt~major, dat2, ylim=c(0,100), main="Waiting time by major")#
+boxplot(wt~city, dat2, ylim=c(0,100), main="Waiting time by city")#
+#
+# Linear Regression!#
+m1 <- lm(wt~major+city+type+entry+byear, dat=dat2)#
+plot(density(residuals(m1)), xlim=c(-50,50), main="Distribution of prediction error")
+summary(m1)
+load("dat.RData")
+boxplot(wt~byear, dat, ylim=c(0,150), main="Waiting time")
+dat2 <- dat[dat$byear>=2009,]
+m1 <- lm(wt~major+city+type+entry+byear, dat=dat2)
+summary(m1)
+m1 <- lm(wt~major+city+type+entry+byear+byear*entry, dat=dat2)
+summary(m1)
+m1 <- lm(wt~major+city+type+entry+byear+major*city, dat=dat2)
+summary(m1)
+plot(density(residuals(m1)), xlim=c(-50,50), main="Distribution of prediction error")
+plot(density(wt))
+plot(density(wt, data=dat))
+plot(density(dat$wt))
+plot(density(dat$wt), xlim=(0,100))
+plot(density(dat$wt), xlim=c(0,100))
+dat2 <- dat[dat$byear>=2012,]
+m1 <- lm(wt~major+city+type+entry+byear+major*city, dat=dat2)
+summary(m1)
+m1 <- lm(wt~major+city+type+entry+byear+bmonth+bday+major*city, dat=dat2)
+summary(m1)
+boxplot(wt~entry, dat2, ylim=c(0,100), main="Waiting time by visa entry")
+boxplot(wt~type, dat2, ylim=c(0,100), main="Waiting time by visa type")
+boxplot(wt~entry, dat2, ylim=c(0,100), main="Waiting time by visa entry")
+boxplot(wt~type, dat2, ylim=c(0,100), main="Waiting time by visa type")
+m1 <- lm(wt~major+city+type+entry+byear+bmonth+bday+major*city+major*entry, dat=dat2)
+summary(m1)
+load("/Users/ronxin/Dropbox/Checkoo Local/dat.RData")
+ls()
+names(dat)
+write.table(dat, file="dat.txt", quote=FALSE, sep="\t", row.names=FALSE, col.names=FALSE)
+rbinom(10, 1, 0.2)
+rnorm(10)
+rnorm(10)*0.01
+y <- rbinom(10, 1, 0.2)#
+x1 <- rnorm(10)*0.01#
+x2 <- y+x1#
+dat <- cbind(y,x1,x2)#
+m1 <- glm(y~x1+x2, family=binomial, data=dat)
+dat <- data.frame(cbind(y,x1,x2))
+m1 <- glm(y~x1+x2, family=binomial, data=dat)
+summary(m1)
+y
+x1
+x2
+y <- rbinom(100, 1, 0.2)
+x1 <- rnorm(100)*0.01
+y <- rbinom(100, 1, 0.2)#
+x1 <- rnorm(100)*0.01#
+x2 <- y+x1#
+dat <- data.frame(cbind(y,x1,x2))#
+m1 <- glm(y~x1+x2, family=binomial, data=dat)#
+summary(m1)
+y <- rbinom(100, 1, 0.2)#
+x1 <- rnorm(100)*0.0001#
+x2 <- y+x1#
+dat <- data.frame(cbind(y,x1,x2))#
+m1 <- glm(y~x1+x2, family=binomial, data=dat)#
+summary(m1)
+dat
+y <- rbinom(100, 1, 0.2)#
+x1 <- rnorm(100)*0.0001#
+x2 <- y+x1#
+dat <- data.frame(cbind(y,x1,x2))#
+m1 <- glm(y~x1+x2, family=binomial, data=dat)#
+summary(m1)
+help(rnorm)
+y <- rbinom(100, 1, 0.2)#
+x1 <- rnorm(100, y, 1)#
+x2 <- rnorm(100)#
+dat <- data.frame(cbind(y,x1,x2))#
+m1 <- glm(y~x1+x2, family=binomial, data=dat)#
+summary(m1)
+dat
+m1 <- glm(y~x1+x2, family=binomial, data=dat)
+summary(m1)
+setwd
+load("weight distribution/w.RData")#
+dc <- density(log(wc$V1))#
+wp <- wp[wp$V1>0,]#
+dp <- density(log(wp$V1))#
+ddc <- density(wdgc$V1)#
+ddp <- density(wdgp$V1)#
+par(mfrow = c(1, 2))#
+par(cex.lab=1.2, cex.axis=1.2, cex.main=1.5, cex.sub=1.5)#
+par(mar = c(3, 3, 3, 0), oma = c(1, 1, 1, 1))#
+#plot(exp(dc$x), dc$y, log="x", type="l", main="edge weight (competitor)\n#edges=1,366,203", xlab="", ylab="")+grid()#
+#plot(exp(dp$x), dp$y, log="x", type="l", main="edge weight (collaborator)\n#edges=294,958", xlab="", ylab="")+grid()#
+plot(ddc, main="competitor network\n#nodes=1,692", xlab="", ylab="")+grid()#
+plot(ddp, main="collaborator network\n#nodes=1,692", xlab="", ylab="")+grid()
+par(mfrow = c(1, 2))#
+par(cex.lab=1.2, cex.axis=1.2, cex.main=1.5, cex.sub=1.5)#
+par(mar = c(3, 3, 3, 0), oma = c(1, 1, 1, 1))#
+#plot(exp(dc$x), dc$y, log="x", type="l", main="edge weight (competitor)\n#edges=1,366,203", xlab="", ylab="")+grid()#
+#plot(exp(dp$x), dp$y, log="x", type="l", main="edge weight (collaborator)\n#edges=294,958", xlab="", ylab="")+grid()#
+plot(ddc, main="competitor network\n#nodes=1,692", xlab="weighted degree", ylab="density")+grid()#
+plot(ddp, main="collaborator network\n#nodes=1,692", xlab="weighted degree", ylab="density")+grid()
+par(mfrow = c(1, 2))#
+par(cex.lab=1.2, cex.axis=1.2, cex.main=1.5, cex.sub=1.5)#
+# margin definition: bottom, left, top and right#
+par(mar = c(6, 6, 6, 0), oma = c(1, 1, 1, 1))#
+#plot(exp(dc$x), dc$y, log="x", type="l", main="edge weight (competitor)\n#edges=1,366,203", xlab="", ylab="")+grid()#
+#plot(exp(dp$x), dp$y, log="x", type="l", main="edge weight (collaborator)\n#edges=294,958", xlab="", ylab="")+grid()#
+plot(ddc, main="competitor network\n#nodes=1,692", xlab="weighted degree", ylab="density")+grid()#
+plot(ddp, main="collaborator network\n#nodes=1,692", xlab="weighted degree", ylab="density")+grid()
+par(mfrow = c(1, 2))#
+par(cex.lab=1.2, cex.axis=1.2, cex.main=1.2, cex.sub=1.2)#
+# margin definition: bottom, left, top and right#
+par(mar = c(6, 6, 6, 0), oma = c(1, 1, 1, 1))#
+#plot(exp(dc$x), dc$y, log="x", type="l", main="edge weight (competitor)\n#edges=1,366,203", xlab="", ylab="")+grid()#
+#plot(exp(dp$x), dp$y, log="x", type="l", main="edge weight (collaborator)\n#edges=294,958", xlab="", ylab="")+grid()#
+plot(ddc, main="competitor network\n#nodes=1,692", xlab="weighted degree", ylab="density")+grid()#
+plot(ddp, main="collaborator network\n#nodes=1,692", xlab="weighted degree", ylab="density")+grid()
+par(mfrow = c(1, 2))#
+par(cex.lab=1.2, cex.axis=1.2, cex.main=1.2, cex.sub=1.2)#
+# margin definition: bottom, left, top and right#
+par(mar = c(6, 6, 3, 0), oma = c(1, 1, 1, 1))#
+#plot(exp(dc$x), dc$y, log="x", type="l", main="edge weight (competitor)\n#edges=1,366,203", xlab="", ylab="")+grid()#
+#plot(exp(dp$x), dp$y, log="x", type="l", main="edge weight (collaborator)\n#edges=294,958", xlab="", ylab="")+grid()#
+plot(ddc, main="competitor network\n#nodes=1,692", xlab="weighted degree", ylab="density")+grid()#
+plot(ddp, main="collaborator network\n#nodes=1,692", xlab="weighted degree", ylab="density")+grid()
+par(mfrow = c(1, 2))#
+par(cex.lab=1.2, cex.axis=1.2, cex.main=1.2, cex.sub=1.2)#
+# margin definition: bottom, left, top and right#
+par(mar = c(5, 5, 3, 0), oma = c(1, 1, 1, 1))#
+#plot(exp(dc$x), dc$y, log="x", type="l", main="edge weight (competitor)\n#edges=1,366,203", xlab="", ylab="")+grid()#
+#plot(exp(dp$x), dp$y, log="x", type="l", main="edge weight (collaborator)\n#edges=294,958", xlab="", ylab="")+grid()#
+plot(ddc, main="competitor network\n#nodes=1,692", xlab="weighted degree", ylab="density")+grid()#
+plot(ddp, main="collaborator network\n#nodes=1,692", xlab="weighted degree", ylab="density")+grid()
+margin definition: bottom, left, top and right#
+par(mar = c(5, 5, 3, 0), oma = c(0, 1, 1, 1))#
+#plot(exp(dc$x), dc$y, log="x", type="l", main="edge weight (competitor)\n#edges=1,366,203", xlab="", ylab="")+grid()#
+#plot(exp(dp$x), dp$y, log="x", type="l", main="edge weight (collaborator)\n#edges=294,958", xlab="", ylab="")+grid()#
+plot(ddc, main="competitor network\n#nodes=1,692", xlab="weighted degree", ylab="density")+grid()#
+plot(ddp, main="collaborator network\n#nodes=1,692", xlab="weighted degree", ylab="density")+grid()
+par(mfrow = c(1, 2))#
+par(cex.lab=1.2, cex.axis=1.2, cex.main=1.2, cex.sub=1.2)#
+# margin definition: bottom, left, top and right#
+par(mar = c(5, 5, 3, 0), oma = c(0, 1, 1, 1))#
+#plot(exp(dc$x), dc$y, log="x", type="l", main="edge weight (competitor)\n#edges=1,366,203", xlab="", ylab="")+grid()#
+#plot(exp(dp$x), dp$y, log="x", type="l", main="edge weight (collaborator)\n#edges=294,958", xlab="", ylab="")+grid()#
+plot(ddc, main="competitor network\n#nodes=1,692", xlab="weighted degree", ylab="density")+grid()#
+plot(ddp, main="collaborator network\n#nodes=1,692", xlab="weighted degree", ylab="density")+grid()
+par(mfrow = c(1, 2))#
+par(cex.lab=1.2, cex.axis=1.2, cex.main=1.2, cex.sub=1.2)#
+# margin definition: bottom, left, top and right#
+par(mar = c(5, 5, 3, 0), oma = c(1, 1, 1, 1))#
+#plot(exp(dc$x), dc$y, log="x", type="l", main="edge weight (competitor)\n#edges=1,366,203", xlab="", ylab="")+grid()#
+#plot(exp(dp$x), dp$y, log="x", type="l", main="edge weight (collaborator)\n#edges=294,958", xlab="", ylab="")+grid()#
+plot(ddc, main="competitor network\n#nodes=1,692", xlab="weighted degree", ylab="density")+grid()#
+plot(ddp, main="collaborator network\n#nodes=1,692", xlab="weighted degree", ylab="density")+grid()
+load("data/dat2.RData")
+load("data/dat3.RData")
+library(PresenceAbsence)
+dat2s <- dat2[dat2$rlv>0.1,]
+dat3s <- dat3[dat3$rlv>0.1,]
+dat3sy <- dat3s[dat3s$cage<2,]
+dat3so <- dat3s[dat3s$cage>10,]
+m4phi <- glm(f4phi, family="binomial", data=dat2s)
+f4phi <- adopted~upop+etr+cpop+rlv+uage+cage + idgsoc+odgsoc+widgsoc+wodgsoc+pgrnk+cpreslogt10+infl+inflnorm+cupresdiffpres + dgc+wdgc+upresclog+rinflc+rinflccc+rinflcsum+cupresdiffc
+f4psi <- adopted~upop+etr+cpop+rlv+uage+cage + idgsoc+odgsoc+widgsoc+wodgsoc+pgrnk+cpreslogt10+infl+inflnorm+cupresdiffpres + dgp+wdgp+uprespmilog+rinflp+rinflpcc+rinflpsum+cupresdiffp
+m4phi <- glm(f4phi, family="binomial", data=dat2s)
+pd <- predict.glm(m4phi, dat3so, type="response")
+cmxdat <- cbind(dat3so$sn, dat3so$adopted, pd)#
+cmat <- cmx(cmxdat)#
+cmat#
+tp <- cmat[1,1]#
+fp <- cmat[1,2]#
+fn <- cmat[2,1]#
+tn <- cmat[2,2]#
+precision <- tp/(tp+fp)#
+recall <- tp/(tp+fn)#
+accuracy <- (tp+tn)/(tp+tn+fp+fn)#
+precision#
+recall#
+accuracy
+m4psi <- glm(f4psi, family="binomial", data=dat2s)#
+pd <- predict.glm(m4psi, dat3so, type="response")#
+cmxdat <- cbind(dat3so$sn, dat3so$adopted, pd)#
+cmat <- cmx(cmxdat)#
+cmat#
+tp <- cmat[1,1]#
+fp <- cmat[1,2]#
+fn <- cmat[2,1]#
+tn <- cmat[2,2]#
+precision <- tp/(tp+fp)#
+recall <- tp/(tp+fn)#
+accuracy <- (tp+tn)/(tp+tn+fp+fn)#
+precision#
+recall#
+accuracy
+pd <- predict.glm(m4psi, dat3sy, type="response")#
+cmxdat <- cbind(dat3sy$sn, dat3sy$adopted, pd)#
+cmat <- cmx(cmxdat)#
+cmat#
+tp <- cmat[1,1]#
+fp <- cmat[1,2]#
+fn <- cmat[2,1]#
+tn <- cmat[2,2]#
+precision <- tp/(tp+fp)#
+recall <- tp/(tp+fn)#
+accuracy <- (tp+tn)/(tp+tn+fp+fn)#
+precision#
+recall#
+accuracy
+pd <- predict.glm(m4phi, dat3sy, type="response")#
+cmxdat <- cbind(dat3sy$sn, dat3sy$adopted, pd)#
+cmat <- cmx(cmxdat)#
+cmat#
+tp <- cmat[1,1]#
+fp <- cmat[1,2]#
+fn <- cmat[2,1]#
+tn <- cmat[2,2]#
+precision <- tp/(tp+fp)#
+recall <- tp/(tp+fn)#
+accuracy <- (tp+tn)/(tp+tn+fp+fn)#
+precision#
+recall#
+accuracy
+pd <- predict.glm(m4phi, dat3s, type="response")#
+cmxdat <- cbind(dat3s$sn, dat3s$adopted, pd)#
+cmat <- cmx(cmxdat)#
+cmat#
+tp <- cmat[1,1]#
+fp <- cmat[1,2]#
+fn <- cmat[2,1]#
+tn <- cmat[2,2]#
+precision <- tp/(tp+fp)#
+recall <- tp/(tp+fn)#
+accuracy <- (tp+tn)/(tp+tn+fp+fn)#
+precision#
+recall#
+accuracy
+pd <- predict.glm(m4psi, dat3s, type="response")#
+cmxdat <- cbind(dat3s$sn, dat3s$adopted, pd)#
+cmat <- cmx(cmxdat)#
+cmat#
+tp <- cmat[1,1]#
+fp <- cmat[1,2]#
+fn <- cmat[2,1]#
+tn <- cmat[2,2]#
+precision <- tp/(tp+fp)#
+recall <- tp/(tp+fn)#
+accuracy <- (tp+tn)/(tp+tn+fp+fn)#
+precision#
+recall#
+accuracy
+load("data/dat3.RData")
+dat3s <- dat3[dat3$rlv>0.1,]
+dat3sy <- dat3s[dat3s$cage<2,]
+dat3so <- dat3s[dat3s$cage>10,]
+dim(dat3s)
+dim(dat3sy)
+dim(dat3so)
+8018/784365
+649855/784364
+649855/784365
+exit()
+help(read.table);;
+dat < - read.table("counts.txt")
+dat <- read.table("counts.txt")
+dat
+summary(dat)
+plot(dat[,1], dat[,2])
+plot(dat[,2], dat[,1])
+plot(dat[,2], dat[,1], log="x")
+setwd("~/Documents/workspace/lingtime/work")#
+dat <- read.table("freq-sumcounts.txt")
+plot(dat[,1], dat[,2])
+plot(dat[,1], dat[,2], log="x")
+setwd("~/Documents/workspace/lingtime/work")
+dat <- read.table("freq-sumcounts.txt")
+plot(dat[,1], dat[,2], log="x")
+plot(dat[,1], dat[,2], log="x", xlab="cut-off threshold", ylab="vocbualry size")
+plot(dat[,1], dat[,2], log="x", xlab="cut-off threshold", ylab="vocbualry size", type="l")
+grid()
+grid(10)
+plot(dat[,1], dat[,2], log="x", xlab="cut-off threshold", ylab="vocbualry size", type="l")
+grid(10)
+plot(dat[,1], dat[,2], log="x", xlab="cut-off threshold", ylab="vocbualry size", type="l")
+grid()
+plot(dat[,1], dat[,2], log="x", xlab="cut-off threshold", ylab="vocbualry size", type="l", main="Hathitrust Full Text English")
+grid()
+plot(dat[,1], dat[,2], log="x", xlab="cut-off threshold (tf)", ylab="vocbualry size", type="l", main="Hathitrust Full Text English")
+grid()
+plot(dat[,1], dat[,2], log="x", xlab="cut-off threshold (tf)", ylab="vocbualry size", type="l", main="Hathitrust Full Text English", xlim=c(40,10000))
+grid()
+yes
+library(yhatr)
+yhat.showmodels()
+yhat.show_models()
+yhat.config <- c(username="rongxin1989@gmail.com",#
+                 apikey="HaDobDyJtFoQQPZ9xRkCJrI44OB6EW8hC6IfUMsGzo8",#
+                 env="http://cloud.yhathq.com/")  #
+yhat.deploy("Checkoo R Linear Regression")#
+yhat.show_models()
+yhat.show_models()
+library(yhatr)
+yhat.show_models()
+!/usr/bin/Rscript#
+#
+library(yhatr)#
+#
+model.transform  <- function(request) {#
+  me <- request$name#
+  paste ("Hello", me, "!")#
+}#
+model.predict <- function(greeting) {#
+  data.frame(greeting=greeting)#
+}#
+#
+yhat.config <- c(username="rongxin1989@gmail.com",#
+                 apikey="HaDobDyJtFoQQPZ9xRkCJrI44OB6EW8hC6IfUMsGzo8",#
+                 env="http://cloud.yhathq.com/")  #
+yhat.deploy ("HelloWorld")
+yhat.deploy
+check.image.size()#
+    AUTH <- get("yhat.config")#
+    if (length(AUTH) == 0) {#
+        stop("Please specify your account credentials using yhat.config.")#
+    }
+yhatr::check.image.size()
+names(AUTH)
+url <- AUTH[["env"]]#
+        AUTH <- AUTH[!names(AUTH) == "env"]#
+        query <- AUTH#
+        query <- paste(names(query), query, collapse = "&", sep = "=")#
+        url <- paste(url, "deployer/model", "?", query, sep = "")#
+        image_file <- ".yhatdeployment.img"#
+        save.image(image_file)#
+        rsp <- httr::POST(url, httr::authenticate(AUTH["username"], #
+            AUTH["apikey"], "basic"), body = list(model_image = httr::upload_file(image_file), #
+            modelname = model_name))#
+        unlink(image_file)#
+        js <- httr::content(rsp)#
+        data.frame(js)
+model_name = "HelloWorld"
+url <- AUTH[["env"]]#
+        AUTH <- AUTH[!names(AUTH) == "env"]#
+        query <- AUTH#
+        query <- paste(names(query), query, collapse = "&", sep = "=")#
+        url <- paste(url, "deployer/model", "?", query, sep = "")#
+        image_file <- ".yhatdeployment.img"#
+        save.image(image_file)#
+        rsp <- httr::POST(url, httr::authenticate(AUTH["username"], #
+            AUTH["apikey"], "basic"), body = list(model_image = httr::upload_file(image_file), #
+            modelname = model_name))#
+        unlink(image_file)#
+        js <- httr::content(rsp)#
+        data.frame(js)
+js
+yhat.show_model()
+yhat.show_models()
+yhat.predict ("HelloWorld", data.frame(name="Hank"))
+yhat.predict
+yhat.predict_raw
+httr
+data = data.frame(name="Hank")
+endpoint <- paste(AUTH["username"], "models", model_name, #
+            "", sep = "/")
+endpoint
+rsp <- yhat.post(endpoint, c(model = model_name), data = data)
+rsp <- yhatr::yhat.post(endpoint, c(model = model_name), data = data)
+rsp <- yhatr::yhat.post123(endpoint, c(model = model_name), data = data)
+yhat.post
+yhat
+install.packages("yhatr")
+library(yhatr)#
+#
+model.transform  <- function(request) {#
+  me <- request$name#
+  paste ("Hello", me, "!")#
+}#
+model.predict <- function(greeting) {#
+  data.frame(greeting=greeting)#
+}#
+#
+yhat.config <- c(username="rongxin1989@gmail.com",#
+                 apikey="HaDobDyJtFoQQPZ9xRkCJrI44OB6EW8hC6IfUMsGzo8",#
+                 env="http://cloud.yhathq.com/")  #
+yhat.deploy ("HelloWorld")
+yhat.predict ("HelloWorld", data.frame(name="Hank"))
+yhat.show_models()
+q()
+install.packages("yhatr")
+ls()
+!/usr/bin/Rscript#
+#
+library(yhatr)#
+#
+model.transform  <- function(request) {#
+  me <- request$name#
+  paste ("Hello", me, "!")#
+}#
+model.predict <- function(greeting) {#
+  data.frame(greeting=greeting)#
+}#
+#
+yhat.config <- c(username="rongxin1989@gmail.com",#
+                 apikey="HaDobDyJtFoQQPZ9xRkCJrI44OB6EW8hC6IfUMsGzo8",#
+                 env="http://cloud.yhathq.com/")  #
+yhat.deploy ("HelloWorld")
+install.packages("yhatr")
+library(yhatr)
+model.transform  <- function(request) {#
+  me <- request$name#
+  paste ("Hello", me, "!")#
+}#
+model.predict <- function(greeting) {#
+  data.frame(greeting=greeting)#
+}#
+#
+yhat.config <- c(username="rongxin1989@gmail.com",#
+                 apikey="HaDobDyJtFoQQPZ9xRkCJrI44OB6EW8hC6IfUMsGzo8",#
+                 env="http://cloud.yhathq.com/")  #
+yhat.deploy ("HelloWorld")
+yhat.show_models()
+library(yhatr)
+yhat.config <- c(username="rongxin1989@gmail.com",#
+                 apikey="HaDobDyJtFoQQPZ9xRkCJrI44OB6EW8hC6IfUMsGzo8",#
+                 env="http://cloud.yhathq.com/")
+yhat.show_models()
+!/usr/bin/env python#
+from yhat import Yhat#
+#yh = Yhat("richeliteys@gmail.com", "RoVGt5VDZfHkdBLx2rre76sg998cD4IuJiYzzNmNp48")#
+yh = Yhat("rongxin1989@gmail.com", "HaDobDyJtFoQQPZ9xRkCJrI44OB6EW8hC6IfUMsGzo8")#
+checkoo_models = yh.show_models()#
+for model in checkoo_models['models']:#
+	print model#
+#
+newcase = {#
+	'loc':'BeiJing', #
+	'major':'Computer Science/Engineering', #
+	'vtype':'F1', #
+	'ventry':'New',#
+	'byear':'2013',#
+	'bmonth':'7',#
+	'bday':'20'#
+}#
+checkoo_version = 14#
+print yh.predict('CKModel',checkoo_version,newcase)
+library(rjson)
+install.packages("rjson")
+yhat.show_models()
+!/usr/bin/Rscript#
+#
+cat("Running RScript.\n")#
+#
+#########################################################################
+# Read data from dat.tsv#
+dat <- read.delim("dat.tsv", header=FALSE)#
+colnames(dat) <- c("uid", "type", "entry", "city", "major", "status", #
+                   "byear", "bmonth", "bday", "eyear", "emonth", "eday",#
+                   "wt")#
+#
+########################################################################
+# Train model for uploading to Yhat#
+#
+# Factorize feature columns#
+# URL for reference: http://www.stat.berkeley.edu/classes/s133/factors.html#
+dat$vtype <- factor(dat$type)#
+dat$ventry <- factor(dat$entry)#
+dat$loc <- factor(dat$city)#
+dat$major <- factor(dat$major)#
+dat$bmonth <- factor(dat$bmonth)#
+dat$bday <- factor(dat$bday)#
+feature_columns <- c("vtype","ventry","loc","major", "bmonth","bday")#
+dat1 <- dat[,c(feature_columns,"wt")]#
+summary(dat1)#
+#
+# Ridge Regression ##
+library(MASS)#
+m1 <- lm.ridge(wt~., dat1)#
+summary(m1)#
+#
+# Not Sure How to Make a prediction with this !! ##
+#
+# Linear regression #
+m2 <- lm(wt~., dat1)#
+summary(m2)#
+#
+# Make prediction of a data point with the linear model#
+pred <- predict(m2, dat1[1,-7], interval="confidence")#
+#
+########################################################################
+# Compose YHat model#
+#
+# model.require(...) # include any package dependency you are using#
+model.transform <- function(df) {#
+	# TODO: Factorize this incoming sample!#
+	df <- df[, feature_columns]#
+	for (feat in feature_columns) {#
+		df[,feat] <- factor(df[,feat], levels(dat1[,feat]))#
+	}#
+	if (is.na(df[1,"major"])) {#
+		df[1,"major"] <- "N/A"#
+		df[,"major"] <- factor(df[,"major"], levels(dat1[,"major"]))#
+	}#
+	df#
+}#
+model.predict <- function(df) {#
+	# yhatr will automatically load any data dependencies in your model#
+	# Therefore, m2 will be automatically uploaded, too#
+	pred <- predict(m2, df, interval="confidence")#
+	pred <- as.data.frame(pred)#
+	result <- NULL#
+	y <- c(pred$fit)#
+	interval_lower <- c(pred$lwr)#
+	interval_upper <- c(pred$upr)#
+	result <- cbind(y, interval_lower, interval_upper)#
+	result <- as.data.frame(result)#
+	result#
+}#
+#
+########################################################################
+# Local Test#
+new_input <- c("F1", "New", "BeiJing", "Chemistry", "9", "15")#
+new_input <- rbind(new_input)#
+colnames(new_input) <- feature_columns#
+new_input <- as.data.frame(new_input)#
+new_input#
+trans <- model.transform(new_input)#
+trans#
+pred <- model.predict(trans)#
+pred#
+#
+# Test Bad Major Name#
+input2 <- c("F1", "New", "BeiJing", "Some Bad Major Name", "9", "15")#
+input2 <- rbind(input2)#
+colnames(input2) <- feature_columns#
+input2 <- as.data.frame(input2)#
+input2#
+trans <- model.transform(input2)#
+trans#
+pred <- model.predict(trans)#
+pred#
+########################################################################
+# Upload yhat model#
+#install.packages("yhatr")#
+#install.packages("XML")#
+library(yhatr)#
+library(RCurl)#
+yhat.config <- c(username="rongxin1989@gmail.com",#
+                 apikey="ff7bb725be9e4a32af286f464b316a23",#
+                 env="http://umsi.yhathq.com/")  #
+yhat.deploy("Checkoo R Linear Regression")#
+yhat.show_models()#
+#
+cat("Finished running RScript.\n")
+yhat.deploy("CheckVisa")
+yhat.show_models()

@@ -95,12 +95,12 @@ pred
 #######################################################################
 # Upload yhat model
 #install.packages("yhatr")
+#install.packages("XML")
 library(yhatr)
 library(RCurl)
 yhat.config <- c(username="rongxin1989@gmail.com",
-                 apikey="HaDobDyJtFoQQPZ9xRkCJrI44OB6EW8hC6IfUMsGzo8",
-                 env="http://cloud.yhathq.com/")  
-yhat.deploy("Checkoo R Linear Regression")
-yhat.show_models()
+                 apikey="ff7bb725be9e4a32af286f464b316a23",
+                 env="http://umsi.yhathq.com/")  
+yhat.deploy("CheckVisa")
 
 cat("Finished running RScript.\n")
